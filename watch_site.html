@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEMPUS — Наручные часы</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #B8922A;
+    --gold-light: #D4AF6A;
+    --dark: #0E0E0E;
+    --dark-2: #1A1A1A;
+    --dark-3: #252525;
+    --text: #E8E2D6;
+    --text-muted: #8A8279;
+    --border: rgba(184,146,42,0.25);
+  }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 3rem;
+    height: 70px;
+    background: rgba(14,14,14,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .nav-logo span {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--text);
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    display: block;
+    line-height: 1;
+  }
+
+  .nav-links { display: flex; gap: 2.5rem; }
+
+  .nav-links button {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color 0.3s;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+  }
+
+  .nav-links button:hover { color: var(--text); }
+  .nav-links button.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* PAGES */
+  .page { display: none; padding-top: 70px; min-height: 100vh; }
+  .page.visible { display: block; }
+
+  /* HOME PAGE */
+  .hero {
+    position: relative;
+    height: calc(100vh - 70px);
+    display: flex; align-items: center;
+    padding: 0 8rem;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(184,146,42,0.08) 0%, transparent 65%);
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 520px; }
+
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.8rem;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4.2rem;
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .hero-text {
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    max-width: 420px;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    padding: 12px 36px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: none;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .hero-cta:hover { background: var(--gold); color: var(--dark); }
+
+  .hero-image-area {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 45%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem;
+  }
+
+  .hero-watch-frame {
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  .hero-watch-frame::before {
+    content: '';
+    position: absolute; inset: -12px;
+    border-radius: 50%;
+    border: 1px solid rgba(184,146,42,0.1);
+  }
+
+  .watch-placeholder {
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .watch-placeholder img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+  .watch-placeholder-icon {
+    font-size: 3rem;
+    color: var(--gold);
+    opacity: 0.4;
+  }
+
+  .watch-placeholder-text {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ABOUT SECTION */
+  .section {
+    padding: 6rem 8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-body {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--text-muted);
+    max-width: 680px;
+  }
+
+  /* GALLERY PAGE */
+  #page-gallery { padding-bottom: 4rem; }
+
+  .gallery-header {
+    padding: 4rem 8rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .gallery-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+  }
+
+  .gallery-header p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Carousel */
+  .carousel-wrapper {
+    padding: 3rem 8rem;
+    position: relative;
+  }
+
+  .carousel {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--dark-2);
+    min-height: 520px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .carousel-slide {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .carousel-slide.active { display: flex; }
+
+  .slide-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 520px;
+  }
+
+  .slide-image {
+    position: relative;
+    overflow: hidden;
+    background: var(--dark-3);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 400px;
+  }
+
+  .slide-image img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .slide-image-placeholder {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    color: var(--text-muted);
+  }
+
+  .slide-image-placeholder svg { opacity: 0.3; }
+
+  .slide-info {
+    padding: 3rem;
+    display: flex; flex-direction: column; justify-content: center;
+    border-left: 1px solid var(--border);
+  }
+
+  .slide-number {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .slide-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    outline: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    width: 100%;
+    cursor: text;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 4px;
+    transition: border-color 0.2s;
+  }
+
+  .slide-name:focus { border-bottom-color: var(--gold); }
+
+  .slide-desc {
+    font-size: 0.88rem;
+    line-height: 1.85;
+    color: var(--text-muted);
+    outline: none;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    width: 100%;
+    resize: none;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 120px;
+    cursor: text;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 4px;
+    transition: border-color 0.2s;
+  }
+
+  .slide-desc:focus { border-bottom-color: var(--gold); color: var(--text); }
+
+  .edit-hint {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    opacity: 0.5;
+    letter-spacing: 0.1em;
+  }
+
+  .slide-actions {
+    display: flex; gap: 10px;
+    margin-top: 2rem;
+  }
+
+  .btn-icon {
+    padding: 8px 14px;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
+
+  .btn-danger {
+    background: none;
+    border: 1px solid rgba(200,60,60,0.4);
+    color: rgba(200,100,100,0.8);
+  }
+
+  .btn-danger:hover { background: rgba(200,60,60,0.1); color: #e07070; }
+
+  /* Carousel controls */
+  .carousel-controls {
+    display: flex; align-items: center; gap: 1.5rem;
+    padding: 1.2rem 3rem;
+    border-top: 1px solid var(--border);
+    background: var(--dark-2);
+  }
+
+  .carousel-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 36px; height: 36px;
+    cursor: pointer; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .carousel-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .carousel-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .carousel-dots {
+    display: flex; gap: 8px; flex: 1; align-items: center;
+  }
+
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+
+  .dot.active { background: var(--gold); transform: scale(1.3); }
+
+  .carousel-counter {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  /* Add photo */
+  .add-photo-bar {
+    padding: 1.5rem 8rem;
+    display: flex; align-items: center; gap: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-add {
+    padding: 10px 28px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    background: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .btn-add:hover { background: var(--gold); color: var(--dark); }
+
+  .add-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  #file-input { display: none; }
+
+  /* CONTACTS PAGE */
+  .contact-page {
+    padding: 5rem 8rem;
+    max-width: 900px;
+  }
+
+  .contact-page h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-page > p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+    letter-spacing: 0.05em;
+  }
+
+  .contact-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .contact-field {
+    display: flex; flex-direction: column; gap: 8px;
+    grid-column: span 1;
+  }
+
+  .contact-field.full { grid-column: span 2; }
+
+  .contact-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .contact-input {
+    background: var(--dark-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .contact-input:focus { border-color: var(--gold); }
+
+  .contact-input::placeholder { color: var(--text-muted); opacity: 0.5; }
+
+  .contact-save-btn {
+    margin-top: 1rem;
+    padding: 13px 40px;
+    background: var(--gold);
+    border: none;
+    color: var(--dark);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .contact-save-btn:hover { opacity: 0.85; }
+
+  .save-status {
+    font-size: 0.8rem;
+    color: #5a9a5a;
+    margin-left: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    letter-spacing: 0.1em;
+  }
+
+  .save-status.show { opacity: 1; }
+
+  .contact-card-preview {
+    margin-top: 3rem;
+    padding: 2rem;
+    border: 1px solid var(--border);
+    background: var(--dark-2);
+  }
+
+  .contact-preview-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-display-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .contact-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .contact-item-label {
+    font-size: 0.68rem;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .contact-item-value {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  /* Divider */
+  .gold-line {
+    width: 40px; height: 1px;
+    background: var(--gold);
+    margin: 2rem 0;
+  }
+
+  /* No slides empty state */
+  .empty-gallery {
+    padding: 5rem 8rem;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+  }
+
+  .empty-gallery p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 1.5rem; }
+    .hero { padding: 0 1.5rem; }
+    .hero-image-area { display: none; }
+    .section, .gallery-header, .carousel-wrapper, .add-photo-bar { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .slide-inner { grid-template-columns: 1fr; }
+    .contact-page { padding: 3rem 1.5rem; }
+    .contact-form { grid-template-columns: 1fr; }
+    .contact-field.full { grid-column: span 1; }
+    .hero-title { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    Tempus
+    <span>Мастерская времени</span>
+  </div>
+  <div class="nav-links">
+    <button class="active" onclick="showPage('home', this)">Главная</button>
+    <button onclick="showPage('gallery', this)">Коллекция</button>
+    <button onclick="showPage('contacts', this)">Контакты</button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page visible">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Ручная работа · Швейцарский механизм</p>
+      <h1 class="hero-title">Время —<br>это <em>искусство</em></h1>
+      <p class="hero-text">
+        Каждый циферблат — это история. Каждый механизм — это философия точности. 
+        Мы создаём часы для тех, кто ценит не просто время, а ощущение его хода.
+      </p>
+      <button class="hero-cta" onclick="showPage('gallery', document.querySelectorAll('.nav-links button')[1])">
+        Смотреть коллекцию
+      </button>
+    </div>
+    <div class="hero-image-area">
+      <div class="hero-watch-frame">
+        <div class="watch-placeholder" id="hero-watch">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="#B8922A" stroke-width="0.8" class="watch-placeholder-icon">
+            <circle cx="12" cy="12" r="9"/>
+            <polyline points="12 7 12 12 15 15"/>
+            <line x1="9" y1="2" x2="15" y2="2"/>
+            <line x1="9" y1="22" x2="15" y2="22"/>
+          </svg>
+          <span class="watch-placeholder-text">Добавьте фото</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="section-tag">О нас</p>
+    <h2 class="section-title">Сорок лет<br>безупречного хода</h2>
+    <div class="gold-line"></div>
+    <p class="section-body">
+      Мастерская Tempus основана в 1984 году в Санкт-Петербурге. Начав с реставрации 
+      антикварных карманных часов, мы пришли к созданию собственных моделей, 
+      в которых живёт дух старой школы и точность современной инженерии.
+      <br><br>
+      Наши часы проходят 240 часов испытаний до того, как попасть на ваше запястье. 
+      Каждый корпус изготовлен вручную из нержавеющей стали или позолоченной латуни. 
+      Каждый ремешок — итальянская кожа или миланское плетение.
+    </p>
+  </section>
+
+  <section class="section">
+    <p class="section-tag">Философия</p>
+    <h2 class="section-title">Против<br><em>торопливости</em></h2>
+    <div class="gold-line"></div>
+    <p class="section-body">
+      Мы живём в эпоху мгновений. Уведомления, пинги, счётчики. Наши часы — противовес. 
+      Они не показывают шаги и не присылают сообщения. Только время. Только то, что важно.
+      <br><br>
+      Надев часы Tempus, вы выбираете другой темп. Более осознанный. Более человеческий.
+    </p>
+  </section>
+</div>
+
+<!-- GALLERY PAGE -->
+<div id="page-gallery" class="page">
+  <div class="gallery-header">
+    <h1>Коллекция</h1>
+    <p>Добавляйте и описывайте модели вашей коллекции</p>
+  </div>
+
+  <div id="gallery-empty" class="empty-gallery" style="display:none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 24 24" stroke="#B8922A" stroke-width="0.7" opacity="0.4">
+      <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>
+    </svg>
+    <p>Коллекция пуста. Добавьте первый экспонат ниже.</p>
+  </div>
+
+  <div id="gallery-carousel" class="carousel-wrapper" style="display:none">
+    <div class="carousel" id="carousel">
+      <!-- slides injected by JS -->
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" id="btn-prev" onclick="moveSlide(-1)">&#8592;</button>
+      <div class="carousel-dots" id="dots"></div>
+      <span class="carousel-counter" id="counter"></span>
+      <button class="carousel-btn" id="btn-next" onclick="moveSlide(1)">&#8594;</button>
+    </div>
+  </div>
+
+  <div class="add-photo-bar">
+    <button class="btn-add" onclick="document.getElementById('file-input').click()">
+      <span>+</span> Добавить фото
+    </button>
+    <span class="add-hint">JPG, PNG — фото появится в карусели с полем для описания</span>
+    <input type="file" id="file-input" accept="image/*" multiple onchange="addPhotos(event)">
+  </div>
+</div>
+
+<!-- CONTACTS PAGE -->
+<div id="page-contacts" class="page">
+  <div class="contact-page">
+    <h1>Контакты</h1>
+    <p>Заполните ваши контактные данные — они сохранятся на этой странице</p>
+
+    <div class="contact-form">
+      <div class="contact-field">
+        <label class="contact-label">Название / Имя</label>
+        <input class="contact-input" id="c-name" type="text" placeholder="Мастерская Tempus" oninput="previewContacts()">
+      </div>
+      <div class="contact-field">
+        <label class="contact-label">Телефон</label>
+        <input class="contact-input" id="c-phone" type="tel" placeholder="+7 (812) 000-00-00" oninput="previewContacts()">
+      </div>
+      <div class="contact-field">
+        <label class="contact-label">E-mail</label>
+        <input class="contact-input" id="c-email" type="email" placeholder="info@tempus.ru" oninput="previewContacts()">
+      </div>
+      <div class="contact-field">
+        <label class="contact-label">Сайт</label>
+        <input class="contact-input" id="c-web" type="text" placeholder="www.tempus.ru" oninput="previewContacts()">
+      </div>
+      <div class="contact-field full">
+        <label class="contact-label">Адрес</label>
+        <input class="contact-input" id="c-address" type="text" placeholder="Санкт-Петербург, ул. Невская, 12" oninput="previewContacts()">
+      </div>
+      <div class="contact-field full">
+        <label class="contact-label">Часы работы</label>
+        <input class="contact-input" id="c-hours" type="text" placeholder="Пн – Пт: 10:00 – 19:00, Сб: 11:00 – 16:00" oninput="previewContacts()">
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; margin-top:2rem; gap:1rem; flex-wrap:wrap">
+      <button class="contact-save-btn" onclick="saveContacts()">Сохранить</button>
+      <span class="save-status" id="save-status">✓ Сохранено</span>
+    </div>
+
+    <div class="contact-card-preview">
+      <p class="contact-preview-label">Предпросмотр карточки</p>
+      <div class="contact-display-grid" id="contact-preview">
+        <div class="contact-item">
+          <span class="contact-item-label">Название</span>
+          <span class="contact-item-value" id="pv-name">—</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Телефон</span>
+          <span class="contact-item-value" id="pv-phone">—</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">E-mail</span>
+          <span class="contact-item-value" id="pv-email">—</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Сайт</span>
+          <span class="contact-item-value" id="pv-web">—</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Адрес</span>
+          <span class="contact-item-value" id="pv-address">—</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Часы работы</span>
+          <span class="contact-item-value" id="pv-hours">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ----- Navigation -----
+  function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+    document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('visible');
+    if (btn) btn.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // ----- Gallery / Carousel -----
+  let slides = [];
+  let currentSlide = 0;
+
+  function addPhotos(event) {
+    const files = Array.from(event.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        slides.push({
+          src: e.target.result,
+          name: file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+          desc: 'Напишите описание этой модели часов — материал корпуса, механизм, особенности...'
+        });
+        renderCarousel();
+        goToSlide(slides.length - 1);
+        // update hero image if it's the first photo
+        if (slides.length === 1) updateHeroWatch();
+      };
+      reader.readAsDataURL(file);
+    });
+    event.target.value = '';
+  }
+
+  function updateHeroWatch() {
+    if (slides.length === 0) return;
+    const hero = document.getElementById('hero-watch');
+    hero.innerHTML = `<img src="${slides[0].src}" alt="Часы">`;
+  }
+
+  function renderCarousel() {
+    const carousel = document.getElementById('carousel');
+    const empty = document.getElementById('gallery-empty');
+    const carouselWrap = document.getElementById('gallery-carousel');
+
+    if (slides.length === 0) {
+      empty.style.display = 'flex';
+      carouselWrap.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+    carouselWrap.style.display = 'block';
+
+    carousel.innerHTML = slides.map((slide, i) => `
+      <div class="carousel-slide ${i === currentSlide ? 'active' : ''}" data-index="${i}">
+        <div class="slide-inner">
+          <div class="slide-image">
+            <img src="${slide.src}" alt="${slide.name}">
+          </div>
+          <div class="slide-info">
+            <p class="slide-number">${String(i + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}</p>
+            <input class="slide-name" value="${escHtml(slide.name)}"
+              oninput="slides[${i}].name = this.value; updateDots()"
+              placeholder="Название модели">
+            <textarea class="slide-desc"
+              oninput="slides[${i}].desc = this.value"
+              placeholder="Описание...">${escHtml(slide.desc)}</textarea>
+            <p class="edit-hint">Нажмите на текст чтобы отредактировать</p>
+            <div class="slide-actions">
+              <button class="btn-icon btn-ghost" onclick="uploadNewPhoto(${i})">↑ Заменить фото</button>
+              <button class="btn-icon btn-danger" onclick="deleteSlide(${i})">✕ Удалить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    renderDots();
+    renderCounter();
+    updateNavBtns();
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderDots() {
+    document.getElementById('dots').innerHTML = slides.map((_, i) =>
+      `<button class="dot ${i === currentSlide ? 'active' : ''}" onclick="goToSlide(${i})"></button>`
+    ).join('');
+  }
+
+  function renderCounter() {
+    const el = document.getElementById('counter');
+    if (slides.length) el.textContent = `${currentSlide + 1} из ${slides.length}`;
+    else el.textContent = '';
+  }
+
+  function updateNavBtns() {
+    document.getElementById('btn-prev').disabled = currentSlide === 0;
+    document.getElementById('btn-next').disabled = currentSlide === slides.length - 1;
+  }
+
+  function updateDots() { renderDots(); }
+
+  function goToSlide(n) {
+    currentSlide = Math.max(0, Math.min(n, slides.length - 1));
+    document.querySelectorAll('.carousel-slide').forEach((s, i) => {
+      s.classList.toggle('active', i === currentSlide);
+    });
+    renderDots();
+    renderCounter();
+    updateNavBtns();
+  }
+
+  function moveSlide(dir) { goToSlide(currentSlide + dir); }
+
+  function deleteSlide(i) {
+    if (!confirm('Удалить этот слайд из коллекции?')) return;
+    slides.splice(i, 1);
+    currentSlide = Math.max(0, Math.min(currentSlide, slides.length - 1));
+    renderCarousel();
+    if (slides.length > 0) goToSlide(currentSlide);
+    updateHeroWatch();
+  }
+
+  function uploadNewPhoto(i) {
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*';
+    inp.onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        slides[i].src = ev.target.result;
+        renderCarousel();
+        goToSlide(i);
+        if (i === 0) updateHeroWatch();
+      };
+      reader.readAsDataURL(file);
+    };
+    inp.click();
+  }
+
+  // Show empty state on load
+  document.getElementById('gallery-empty').style.display = 'flex';
+  document.getElementById('gallery-carousel').style.display = 'none';
+
+  // ----- Contacts -----
+  function previewContacts() {
+    const fields = ['name','phone','email','web','address','hours'];
+    fields.forEach(f => {
+      const val = document.getElementById('c-' + f).value.trim();
+      document.getElementById('pv-' + f).textContent = val || '—';
+    });
+  }
+
+  function saveContacts() {
+    const data = {};
+    ['name','phone','email','web','address','hours'].forEach(f => {
+      data[f] = document.getElementById('c-' + f).value;
+    });
+    localStorage.setItem('tempus_contacts', JSON.stringify(data));
+    const s = document.getElementById('save-status');
+    s.classList.add('show');
+    setTimeout(() => s.classList.remove('show'), 2500);
+  }
+
+  function loadContacts() {
+    try {
+      const data = JSON.parse(localStorage.getItem('tempus_contacts') || '{}');
+      ['name','phone','email','web','address','hours'].forEach(f => {
+        if (data[f]) document.getElementById('c-' + f).value = data[f];
+      });
+      previewContacts();
+    } catch(e) {}
+  }
+
+  loadContacts();
+</script>
+</body>
+</html>
